@@ -91,11 +91,20 @@ def download(urls : list, log : bool):
 	path = CONFIG["images"]["image_path"]
 	file_extension = "." + CONFIG["images"]["image_extension"]
 
+	# TODO very ugly writing, please fix
 	if os.path.exists(path) == False:
 		os.mkdir(path)
 
-	for index, url in enumerate(urls):
-		full_path = path + f"wallpaper{index}" + file_extension
+	for url in urls:
+		with open("globals.json", "r+") as f:
+			data = json.load(f)
+			number = data["index"]
+
+		with open("globals.json", "w+") as f:
+			f.write(json.dumps({"index": number+1}))
+			f.close()
+
+		full_path = path + f"wallpaper{number}" + file_extension
 		if log:
 			print(f"Began Download: {url}, Time: {round(time.time() - starttime, 2)}, name: {full_path}")
 		try: r = requests.get(url)
